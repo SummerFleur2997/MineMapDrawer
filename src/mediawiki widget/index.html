@@ -3,18 +3,18 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>My First TS App</title>
-    <script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script>
+    <title>Mine Map Drawer</title>
 </head>
 <body>
+<div id="setting">
     <h2>设置</h2>
 
     <label for="mapIndex">地图样式</label>
-    <input type="number" id="mapIndex" min="0" max="58" value="0"/>
+    <input class="setting" type="number" id="mapIndex" min="0" max="58" value="0"/>
     <br/>
 
     <label for="region">区域</label>
-    <select id="region">
+    <select class="setting" id="region">
         <option value="">1 ~ 39 层</option>
         <option value="frost">40 ~ 79 层</option>
         <option value="lava">80 ~ 119 层</option>
@@ -26,29 +26,20 @@
     <br/>
 
     <label for="dark">黑暗层</label>
-    <input type="checkbox" id="dark"/>
+    <input class="setting" type="checkbox" id="dark"/>
     <br/>
 
     <label for="dangerous">危险矿井</label>
-    <input type="checkbox" id="dangerous"/>
+    <input class="setting" type="checkbox" id="dangerous"/>
     <br/>
-
-    <button id="start">开始</button>
-
+</div>
+<div id="map">
     <h2>地图</h2>
-    <canvas id="mapCanvas" width="800" height="600"></canvas>
+    <canvas class="map" id="mapCanvas" width="800" height="600"></canvas>
+</div>
 
-    <script src="./dist/bundle.js"></script>
-    <script>
-        // 配置基础路径（可选）
-        require.config({
-            baseUrl: './dist'
-        });
-
-        // 加载 bundle 并执行入口
-        require(['bundle'], function() {
-            require(['main']);
-        });
-    </script>
+<script src="./dist/map.js"></script>
+<script src="./dist/tileSet.js"></script>
+<script src="./dist/main.js"></script>
 </body>
 </html>

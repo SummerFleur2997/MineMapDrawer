@@ -1,7 +1,7 @@
 ﻿/**
  * 图块集类：负责加载大图并计算所有子图块的坐标
  */
-export class tileSet
+class tileSet
 {
     /**
      * 图块集的唯一标识 ID
@@ -35,13 +35,11 @@ export class tileSet
         const ts = new tileSet(tileID);
         const tileSize = 16;
 
-        // 加载图片
-        const fullPath = `./src/assets/${tileID}.png`;
-        ts.image = await tileSet.loadImageAsync(fullPath);
+        ts.image = await resourceHelper.loadImageAsync(tileID);
 
         // 确保图片加载成功
         if (!ts.image.width || !ts.image.height)
-            throw new Error(`Failed to load tileset image: ${fullPath}`);
+            throw new Error(`Failed to load tileset image: ${tileID}`);
 
         // 计算行列数并分割图块集
         const columns = Math.floor(ts.image.width / tileSize);
@@ -97,17 +95,73 @@ export class tileSet
             destX, destY, source.width, source.height       // 目标矩形（在 Canvas 里的位置）
         );
     }
+}
+
+class resourceHelper
+{
+    /**
+     * 图片缓存字典。
+     */
+    public static cachedImage: Record<string, HTMLImageElement> = {};
 
     /**
-     * 私有辅助方法：封装图片加载逻辑为 Promise
+     * 图片 URL 字典，对应 wiki 上图集的 url
      */
-    private static loadImageAsync(src: string): Promise<HTMLImageElement>
+    private static wikiImageUrl: Record<string, string> = {
+        "mine": "a/a0/65r3e21i6s3lxm6k2tiazdj1sroadqb",
+        "mine_dark": "5/5d/8ptcwesxswlvat5ozag8nb9finlwqcd",
+        "mine_dangerous": "b/b2/c22ogfbjv54mrtkwhramiwmf8zsq793",
+        "mine_dark_dangerous": "f/f5/47mc92hr3lvkz01piockwbin842aq74",
+
+        "mine_frost": "6/61/4chirqhh0rlhwjaze9qe2ztfllv68cz",
+        "mine_frost_dark": "4/4e/m4n1ureiceithkmq5wmgce7fkkywqso",
+        "mine_frost_dangerous": "c/ca/ej53ccmr30ql66qx5hwa9ock7vm4g8i",
+        "mine_frost_dark_dangerous": "4/44/p3ga1xxmweq9i89jjtefg7tjmusfoo5",
+
+        "mine_lava": "c/c2/3y1peft41dck9db0ib97nb1iztmtk6b",
+        "mine_lava_dark": "7/73/idm60ubxikf9vcgbxwb74qcwrzd6evx",
+        "mine_lava_dangerous": "1/11/adbi1a8ddikfxoh7fiz6t8tc59rccsj",
+        "mine_lava_dark_dangerous": "8/89/j91ewq4m292tgvrjelqjgz6jb23k4ar",
+
+        "mine_desert": "d/d2/pi11x2mnbnajvojdk00woydp1xrsgrq",
+        "mine_desert_dark": "6/64/lyk273uji6idvdmeaetzm4wodr1i4q7",
+        "mine_desert_dangerous": "f/f9/jmkc65mkgpp5ikd3mv7b28gwf98tflq",
+        "mine_desert_dark_dangerous": "e/e1/kf5jr54z8agrnof0j80wfahdcie744n",
+
+        "mine_slime": "4/48/9my9b9wuhic2w1ya34nxythbeoy581g",
+        "mine_slime_dangerous": "1/10/pml4ocqdr8c64espgqyt55msa8jwvlq",
+        "mine_dino": "5/5e/8dw2h9saposuh7mekf2evo85fcyjcfv",
+        "mine_quarryshaft": "6/62/l2jbeojwfm1em9i1pmrxi3nzwz3tu60",
+    };
+
+    /**
+     * 获取图片，优先从缓存读取，未缓存则异步加载
+     * @param imageId 图片标识符（对应 wikiImageUrl 的键）
+     */
+    public static async loadImageAsync(imageId: string): Promise<HTMLImageElement>
     {
-        return new Promise((resolve, reject) => {
+        if (this.cachedImage[imageId])
+        {
+            console.log("Use cached image: " + imageId);
+            return this.cachedImage[imageId];
+        }
+
+        const relativePath = this.wikiImageUrl[imageId];
+        if (!relativePath)
+            return Promise.reject(new Error(`Image ID not found: ${imageId}`));
+
+        const fullUrl = `https://patchwiki.biligame.com/images/stardewvalley/${relativePath}.png` ;
+        return new Promise((resolve, reject) =>
+        {
             const img = new Image();
-            img.onload = () => resolve(img);
+            img.onload = () =>
+            {
+                this.cachedImage[imageId] = img;
+                console.log("Load image from wiki: " + imageId);
+                resolve(img);
+            };
             img.onerror = (err) => reject(err);
-            img.src = src;
+            img.src = fullUrl;
         });
     }
 }

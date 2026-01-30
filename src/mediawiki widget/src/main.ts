@@ -1,7 +1,4 @@
-﻿import { map, allMapData } from './map';
-import { tileSet } from './tileSet';
-
-let maps: map[] = new Array<map>;
+﻿let maps: map[] = new Array<map>;
 
 async function renderMaps(): Promise<void>
 {
@@ -29,8 +26,6 @@ async function renderMaps(): Promise<void>
     if (isDangerous && regionValue !== "dino" && regionValue !== "quarryshaft")
         tileID += "_dangerous";
 
-    console.log(`Tile ID: ${tileID}`)
-
     // 获取 canvas 元素和 2D 上下文
     let canvas: HTMLCanvasElement;
     let ctx: CanvasRenderingContext2D;
@@ -43,10 +38,11 @@ async function renderMaps(): Promise<void>
     if (!c)
         throw new Error("Failed to get 2D context.");
     ctx = c;
-    console.log("Successfully got 2D context, ready to draw map.");
+    console.log("2D context got, ready to draw map.");
 
     const mapIndexInput = document.getElementById('mapIndex') as HTMLInputElement;
     const mapIndex = parseInt(mapIndexInput.value);
+    console.log(mapIndex)
     const map = maps[mapIndex]
     let ts: tileSet;
     ts = await tileSet.createAsync(tileID);
@@ -56,6 +52,7 @@ async function renderMaps(): Promise<void>
 
     // 清空上一帧的内容（对应新建一张白纸）
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    console.log("Canvas cleared.");
 
     // 定义要绘制的图层顺序
     const layers = [map.BackLayerData, map.BuildingsLayerData, map.FrontLayerData];
@@ -80,6 +77,7 @@ async function renderMaps(): Promise<void>
             ts.drawMap(ctx, index, destX, destY);
         }
     }
+    console.log(`Successfully draw the map: ${mapIndex} (${tileID}) \n`);
 }
 
 /**
@@ -118,10 +116,27 @@ async function decodeMaps(): Promise<void>
         maps[i] = new map(chunk);
     }
     console.log("Successfully load all data");
+    renderMaps().catch(err => console.error("Failed to render the map!", err));
 }
 
-console.log("111")
+function registerListener(id: string): void
+{
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const eventType = el.tagName === 'INPUT' && (el as HTMLInputElement).type === 'number'
+        ? 'input'
+        : 'change';
+
+    el.addEventListener(eventType, autoRender);
+}
+
+function autoRender(): void
+{
+    renderMaps().catch(err => console.error("Failed to render the map!", err));
+}
+
 decodeMaps().catch(err => console.error(err));
 
-document.getElementById('start')?.addEventListener('click',
-    () => {renderMaps().catch(console.error)} );
+const controlIds = ['mapIndex', 'region', 'dark', 'dangerous'];
+controlIds.forEach(registerListener);
