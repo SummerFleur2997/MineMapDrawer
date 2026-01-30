@@ -50,8 +50,10 @@ async function renderMaps(): Promise<void>
     canvas.width = map.Width * 16;
     canvas.height = map.Height * 16;
 
-    // 清空上一帧的内容（对应新建一张白纸）
+    // 清空上一帧的内容，然后涂黑
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     console.log("Canvas cleared.");
 
     // 定义要绘制的图层顺序
