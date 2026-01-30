@@ -158,12 +158,19 @@ public class Map
 }
 
 [UsedImplicitly(ImplicitUseTargetFlags.Members)]
-internal class MapDataHeader(ushort index, ushort length, uint offset)
+internal class MapDataHeader
 {
     public const int BINARY_LENGTH = 8;
-    public ushort Index { get; set; } = index;
-    public ushort Length { get; set; } = length;
-    public uint Offset { get; set; } = offset;
+    public ushort Index { get; set; }
+    public ushort Length { get; set; }
+    public uint Offset { get; set; }
+
+    public MapDataHeader(ushort index, ushort length, uint offset)
+    {
+        Index = index;
+        Length = length;
+        Offset = offset;
+    }
 
     public byte[] Encode()
     {
