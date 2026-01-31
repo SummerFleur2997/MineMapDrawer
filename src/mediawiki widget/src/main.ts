@@ -58,7 +58,7 @@ async function renderMaps(): Promise<void>
 
     const tileId = getTileId();
     const mapIndex = getMapIndex();
-    const map = maps[mapIndex];
+    const map = maps[mapIndex - 1];
     let ts: tileSet;
     ts = await tileSet.createAsync(tileId);
 

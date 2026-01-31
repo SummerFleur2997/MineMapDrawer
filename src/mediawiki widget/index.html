@@ -4,42 +4,87 @@
 <head>
     <meta charset="UTF-8">
     <title>Mine Map Drawer</title>
+    <style>
+        .setting-item {
+            padding: 5px 5px 5px 10px;
+        }
+        .map-container {
+            margin-left: 10px;
+            overflow-x: auto;
+            overflow-y: auto;
+            height: auto;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tips-box {
+            color: dimgray;
+            padding: 10px;
+        }
+        .tip-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .tip-text {
+            font-size: 0.9em;
+            margin: 5px 0;
+            line-height: 1.2;
+        }
+    </style>
 </head>
 <body>
 <div id="setting">
-    <h2>设置</h2>
+    <h2><span>设置</span></h2>
 
-    <label for="mapIndex">地图样式</label>
-    <input class="setting" type="number" id="mapIndex" min="0" max="58" value="0"/>
-    <br/>
+    <div class="setting-item">
+        <label for="mapIndex">地图样式</label>
+        <input type="number" id="mapIndex" min="1" max="59" value="1"/>
+    </div>
 
-    <label for="region">区域</label>
-    <select class="setting" id="region">
-        <option value="">1 ~ 39 层</option>
-        <option value="frost">40 ~ 79 层</option>
-        <option value="lava">80 ~ 119 层</option>
-        <option value="desert">骷髅洞穴</option>
-        <option value="slime">史莱姆层</option>
-        <option value="dino">史前层</option>
-        <option value="quarryshaft">采石场矿井</option>
-    </select>
-    <br/>
+    <div class="setting-item">
+        <label for="region">区域</label>
+        <select id="region">
+            <option value="">普通</option>
+            <option value="frost">冰冻层</option>
+            <option value="lava">岩浆层</option>
+            <option value="desert">骷髅洞穴</option>
+            <option value="slime">史莱姆层（入侵层）</option>
+            <option value="dino">史前层（恐龙层）</option>
+            <option value="quarryshaft">地牢层（采石场矿井）</option>
+        </select>
+    </div>
 
-    <label for="dark">黑暗层</label>
-    <input class="setting" type="checkbox" id="dark"/>
-    <br/>
+    <div class="setting-item">
+        <input type="checkbox" id="dark"/>
+        <label for="dark">黑暗层（木乃伊层）</label>
+    </div>
 
-    <label for="dangerous">危险矿井</label>
-    <input class="setting" type="checkbox" id="dangerous"/>
-    <br/>
+    <div class="setting-item">
+        <input type="checkbox" id="dangerous"/>
+        <label for="dangerous">危险矿井</label>
+    </div>
 
-    <button id="download">保存图片</button>
+    <div class="setting-item">
+        <button id="download">保存图片</button>
+    </div>
+
+    <div class="tips-box">
+        <div class="tip-title">提示：</div>
+        <p class="tip-text">
+            部分地图样式在实际游戏中是不可能出现的，例如地图样式 20 不可能有骷髅洞穴、黑暗层等变种，因此显示的效果不正常，并非本脚本的问题。
+        </p>
+        <p class="tip-text">
+            若需要导出全部矿井地图（共 1180 种变种），请前往 Github 下载
+            <a href="https://github.com/SummerFleur2997/MineMapDrawer/releases">导出工具</a>
+            （目前仅支持 PC）。
+        </p>
+    </div>
 </div>
 <div id="map">
-    <h2>地图</h2>
-    <canvas class="map" id="mapCanvas" width="800" height="600"></canvas>
-</div>
+    <h2><span>地图</span></h2>
 
+    <div class="map-container">
+        <canvas id="mapCanvas" width="800" height="600"></canvas>
+    </div>
+</div>
 <script src="./dist/map.js"></script>
 <script src="./dist/tileSet.js"></script>
 <script src="./dist/main.js"></script>
