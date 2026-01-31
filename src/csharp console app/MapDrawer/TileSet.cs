@@ -23,6 +23,10 @@ public class TileSet : IDisposable
         Tiles = new List<Image<Rgba32>>();
         TileID = tileID;
         var path = Path.Combine("assets", string.Concat(tileID, ".png"));
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException($"未找到 asset 文件夹下的 {tileID}，请按照 README 的指示进行操作。");
+        }
         var image = Image.Load<Rgba32>(path);
 
         // 计算图块集的行列数
@@ -78,7 +82,7 @@ public class TileSet : IDisposable
 
             Directory.CreateDirectory(Path.Combine("output", TileID));
             result.Save(Path.Combine("output", TileID, $"{map.Index}.png"));
-            Program.CompletedActions++;
+            Program.IncrementCompletedActions();
         }
     }
 
@@ -103,5 +107,6 @@ public class TileSet : IDisposable
         foreach (var tile in Tiles)
             tile.Dispose();
         Tiles.Clear();
+        GC.SuppressFinalize(this);
     }
 }
