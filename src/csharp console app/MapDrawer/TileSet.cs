@@ -78,6 +78,7 @@ public class TileSet : IDisposable
 
             Directory.CreateDirectory(Path.Combine("output", TileID));
             result.Save(Path.Combine("output", TileID, $"{map.Index}.png"));
+            Program.CompletedActions++;
         }
     }
 

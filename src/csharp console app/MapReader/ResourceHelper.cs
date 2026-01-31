@@ -2,16 +2,7 @@
 
 public static class ResourceHelper
 {
-    public static readonly List<Map> AllMaps;
-
-    static ResourceHelper()
-    {
-        AllMaps = Directory
-            .GetFiles("maps", "*.xml")
-            .OrderBy(s => s.HumanSort())
-            .Select(path => new Map(path))
-            .ToList();
-    }
+    public static readonly List<Map> AllMaps = DecodeFromBinary();
 
     /// <summary>
     /// 编码数据为自定义的二进制格式。
@@ -57,13 +48,11 @@ public static class ResourceHelper
         File.WriteAllText("maps_base64.txt", base64String);
     }
 
-#if DEBUG
-
     /// <summary>
     /// 从二进制文件解码地图数据。
     /// </summary>
     /// <returns>解码后的地图列表。</returns>
-    public static List<Map> DecodeFromBinary()
+    private static List<Map> DecodeFromBinary()
     {
         // 读取并解压文件数据
         var buffer = File.ReadAllBytes(".maps").Decompress();
@@ -95,6 +84,4 @@ public static class ResourceHelper
 
         return maps.OrderBy(m => m.Index).ToList();
     }
-
-#endif
 }

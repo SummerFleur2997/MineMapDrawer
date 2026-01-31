@@ -9,20 +9,9 @@
 3. 在 `Program.exe`  所在目录下创建 `assets` 文件夹，并将解包的 png 文件放入其中；
 4. 双击运行 exe，即可将图片绘制到 output 文件夹内，需要 NET 6 运行时。
 
-若您不知道如何解包，也可以前往 Bwiki 下载这些文件，文件的链接放在本文档最底部。
+绘制完毕的地图位于 `output` 文件夹下，共 1180 张。可能偶尔会出现卡 99% 的问题，若长时间无反应直接关闭即可。
 
-**导出自定义二进制文件**
-
-此工具亦可用于导出二进制文件及其 base64 编码，用于 [MediaWiki Widget](../mediawiki%20widget) 中，以下是操作方法：
-
-下载 Release 版本并解压到任意目录，右击资源管理器，在命令行中打开，然后输入以下命令：
-```bash
-./MapDrawer.exe export
-```
-
-命令执行完毕后目录下会生成 `.maps`（gzip 压缩后的二进制）和 `maps_base64.txt`（base64 编码）两个文件，不会绘制图片。
-
-**Asset 链接**
+若您不知道如何解包，也可以前往 Bwiki 下载这些文件，以下是这些文件的链接。
 
 * [Mine](https://wiki.biligame.com/stardewvalley/File:Mine.png)
 * [Mine_dark](https://wiki.biligame.com/stardewvalley/File:Mine_dark.png)
