@@ -154,6 +154,7 @@ class resourceHelper
         return new Promise((resolve, reject) =>
         {
             const img = new Image();
+            img.crossOrigin = "Anonymous";
             img.onload = () =>
             {
                 this.cachedImage[imageId] = img;

@@ -1,6 +1,10 @@
 ﻿let maps: map[] = new Array<map>;
+let outputFileName: string;
 
-async function renderMaps(): Promise<void>
+/**
+ * 获取图块集 Id
+ */
+function getTileId(): string
 {
     // 矿井区域
     const regionSelect = document.getElementById('region') as HTMLSelectElement;
@@ -26,26 +30,37 @@ async function renderMaps(): Promise<void>
     if (isDangerous && regionValue !== "dino" && regionValue !== "quarryshaft")
         tileID += "_dangerous";
 
-    // 获取 canvas 元素和 2D 上下文
-    let canvas: HTMLCanvasElement;
-    let ctx: CanvasRenderingContext2D;
+    return tileID;
+}
 
-    canvas = document.getElementById("mapCanvas") as HTMLCanvasElement;
+/**
+ * 获取地图索引
+ */
+function getMapIndex(): number
+{
+    const mapIndexInput = document.getElementById('mapIndex') as HTMLInputElement;
+    return parseInt(mapIndexInput.value);
+}
+
+/**
+ * 在 canvas 上绘制地图
+ */
+async function renderMaps(): Promise<void>
+{
+    // 获取 canvas 元素和 2D 上下文
+    const canvas = document.getElementById("mapCanvas") as HTMLCanvasElement;
     if (!canvas)
         throw new Error("Canvas not found.");
 
-    let c = canvas.getContext('2d');
-    if (!c)
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    if (!ctx)
         throw new Error("Failed to get 2D context.");
-    ctx = c;
-    console.log("2D context got, ready to draw map.");
 
-    const mapIndexInput = document.getElementById('mapIndex') as HTMLInputElement;
-    const mapIndex = parseInt(mapIndexInput.value);
-    console.log(mapIndex)
-    const map = maps[mapIndex]
+    const tileId = getTileId();
+    const mapIndex = getMapIndex();
+    const map = maps[mapIndex];
     let ts: tileSet;
-    ts = await tileSet.createAsync(tileID);
+    ts = await tileSet.createAsync(tileId);
 
     canvas.width = map.Width * 16;
     canvas.height = map.Height * 16;
@@ -79,7 +94,8 @@ async function renderMaps(): Promise<void>
             ts.drawMap(ctx, index, destX, destY);
         }
     }
-    console.log(`Successfully draw the map: ${mapIndex} (${tileID}) \n`);
+    console.log(`Successfully draw the map: ${mapIndex} (${tileId}) \n`);
+    outputFileName = `${tileId}_${mapIndex}.png`;
 }
 
 /**
@@ -118,7 +134,7 @@ async function decodeMaps(): Promise<void>
         maps[i] = new map(chunk);
     }
     console.log("Successfully load all data");
-    renderMaps().catch(err => console.error("Failed to render the map!", err));
+    autoRender();
 }
 
 function registerListener(id: string): void
@@ -133,12 +149,32 @@ function registerListener(id: string): void
     el.addEventListener(eventType, autoRender);
 }
 
+function registerClickEvent(): void
+{
+    const dl = document.getElementById('download');
+    if (!dl) return;
+
+    dl.addEventListener('click', saveMap);
+}
+
 function autoRender(): void
 {
     renderMaps().catch(err => console.error("Failed to render the map!", err));
+}
+
+function saveMap(): void
+{
+    const canvas = document.getElementById("mapCanvas") as HTMLCanvasElement;
+    if (!canvas)
+        throw new Error("Canvas not found.");
+    const link = document.createElement('a');
+    link.download = outputFileName;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
 }
 
 decodeMaps().catch(err => console.error(err));
 
 const controlIds = ['mapIndex', 'region', 'dark', 'dangerous'];
 controlIds.forEach(registerListener);
+registerClickEvent();
